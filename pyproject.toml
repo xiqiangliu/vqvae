@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "vqvae"
+version = "0.1.0"
+description = "An implementation of Vector Quantized Variational Autoencoder."
+authors = ["Xiqiang Liu <9440183+xiqiangliu@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+numpy = ">=1.26.0"
+torch = ">=2.1.0"
+torchvision = "^0.17.1"
+matplotlib = "^3.8.3"
+lightning = "^2.2.1"
+tqdm = "^4.66.2"
+einops = "^0.7.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.2"
+
+[tool.poetry.group.interactive]
+optional = true
+
+[tool.poetry.group.interactive.dependencies]
+ipykernel = "^6.29.3"
+ipywidgets = "^8.1.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
