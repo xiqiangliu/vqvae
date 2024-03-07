@@ -6,7 +6,7 @@ _logger = logging.getLogger(__name__)
 _logger.info(f"Using torch version {torch.__version__}")
 
 if torch.cuda.is_available():
-    _logger.info(f"Using {torch.cuda.get_device_name()} for acceleration")
+    _logger.info("Using CUDA for acceleration")
     device = torch.device("cuda")
 elif torch.backends.mps.is_available():
     _logger.info("Using MPS for acceleration")

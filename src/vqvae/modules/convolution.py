@@ -9,7 +9,6 @@ class ConvLayer(nn.Sequential):
         out_channels (int): Number of output channels.
         kernel_size (int): Size of the convolving kernel.
         stride (int): Stride of the convolution.
-        padding (int): Zero-padding added to both sides of the input.
         batchnorm (bool): Whether to use batch normalization. Defaults to False.
     """
 
@@ -20,15 +19,16 @@ class ConvLayer(nn.Sequential):
         kernel_size: int,
         stride: int = 1,
         batchnorm: bool = False,
+        padding: int = 0,
     ):
         super().__init__(
+            nn.ReLU(),
             nn.Conv2d(
                 in_channels,
                 out_channels,
                 kernel_size=kernel_size,
                 stride=stride,
-                padding=kernel_size // 2,
+                padding=padding,
             ),
             nn.BatchNorm2d(out_channels) if batchnorm else nn.Identity(),
-            nn.ReLU(inplace=True),
         )

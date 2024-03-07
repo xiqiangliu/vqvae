@@ -49,11 +49,9 @@ class Quantizer(nn.Module):
         encoding_indices = torch.argmin(distances, dim=1).view(b, h, w)
         quantized = self.embedding(encoding_indices).permute(0, 3, 1, 2)
 
-        # Calculate the quantization loss
+        # Calculate the quantization loss and commitment loss
         inputs = rearrange(inputs, "(b h w) c -> b c h w", b=b, h=h, w=w)
         quantization_loss = torch.mean((quantized.detach() - inputs) ** 2)
-
-        # Calculate the commitment loss
         commitment_loss = torch.mean((quantized - inputs.detach()) ** 2)
 
-        return quantized, quantization_loss, commitment_loss, encoding_indices
+        return quantized, quantization_loss, commitment_loss

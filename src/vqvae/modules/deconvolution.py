@@ -27,11 +27,7 @@ class DeConvLayer(nn.Sequential):
                 out_channels,
                 kernel_size=kernel_size,
                 stride=stride,
-                padding=kernel_size // 2
-                if kernel_size % 2 == 0
-                else (kernel_size - 1) // 2,
-                output_padding=1 if kernel_size % 2 == 1 else 0,
             ),
             nn.BatchNorm2d(out_channels) if batchnorm else nn.Identity(),
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
         )

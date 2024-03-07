@@ -2,14 +2,14 @@ from typing import Sequence
 
 import torch
 import torch.nn as nn
-from vqvae.modules.convolution import ConvLayer
+from vqvae.modules.deconvolution import DeConvLayer
 from vqvae.modules.residual import ResidualStackedLayer
 
 
-class VQVAEEncoder(nn.Module):
+class VQVAEDecoder(nn.Module):
     def __init__(
         self,
-        in_channels: int,
+        out_channels: int,
         hidden_channels: Sequence[int],
         kernel_sizes: Sequence[int],
         num_residual_layers: int,
@@ -22,18 +22,18 @@ class VQVAEEncoder(nn.Module):
         if len(hidden_channels) != len(kernel_sizes):
             raise ValueError("Number of hidden channels and kernel sizes must match.")
 
-        self.conv = nn.Sequential(
+        self.deconv = nn.Sequential(
             *[
-                ConvLayer(
-                    in_channels=in_channels if i == 0 else hidden_channels[i - 1],
-                    out_channels=hidden_channels[i],
+                DeConvLayer(
+                    in_channels=hidden_channels[i],
+                    out_channels=hidden_channels[i] if i > 0 else out_channels,
                     kernel_size=kernel_sizes[i],
                     stride=strides[i] if strides else 1,
                     batchnorm=batchnorm[i]
                     if isinstance(batchnorm, Sequence)
                     else batchnorm,
                 )
-                for i in range(len(hidden_channels))
+                for i in range(len(hidden_channels) - 1, -1, -1)
             ]
         )
 
@@ -47,6 +47,6 @@ class VQVAEEncoder(nn.Module):
         )
 
     def forward(self, x: torch.Tensor):
-        x = self.conv(x)
         x = self.residual_layers(x)
+        x = self.deconv(x)
         return x
