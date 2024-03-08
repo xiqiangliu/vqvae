@@ -1,4 +1,4 @@
-import pytorch_lightning as pl
+import lightning as L
 import torchvision.datasets as tv_datasets
 from torch.utils.data import DataLoader
 
@@ -6,7 +6,7 @@ from vqvae import PROJECT_ROOT
 from .transforms import standard_transform as fashion_mnist_transform
 
 
-class FashionMNISTDataModule(pl.LightningDataModule):
+class FashionMNISTDataModule(L.LightningDataModule):
     def __init__(self, batch_size: int = 256):
         super().__init__()
         self.batch_size = batch_size

@@ -1,6 +1,6 @@
 from typing import Sequence
 
-import pytorch_lightning as pl
+import lightning as L
 import torch
 import torch.nn.functional as F
 
@@ -9,7 +9,7 @@ from vqvae.modules.encoder import VQVAEEncoder
 from vqvae.modules.quantizer import Quantizer
 
 
-class VQVAE(pl.LightningModule):
+class VQVAE(L.LightningModule):
     def __init__(
         self,
         in_channels: int,
