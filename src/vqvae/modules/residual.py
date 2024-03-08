@@ -21,10 +21,10 @@ class ResidualLayer(nn.Module):
     ):
         super().__init__()
         self.res_block = nn.Sequential(
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
             nn.Conv2d(in_channels, hidden_channels, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(hidden_channels) if batchnorm else nn.Identity(),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
             nn.Conv2d(hidden_channels, out_channels, kernel_size=1, stride=1),
             nn.BatchNorm2d(out_channels) if batchnorm else nn.Identity(),
         )
@@ -55,7 +55,7 @@ class ResidualStackedLayer(nn.Sequential):
     ):
         super().__init__(
             *[ResidualLayer(in_channels, out_channels, hidden_channels)] * num_layers
-            + [nn.ReLU()]
+            + [nn.ReLU(inplace=True)]
         )
 
 

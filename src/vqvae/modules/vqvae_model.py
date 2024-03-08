@@ -94,7 +94,8 @@ class VQVAE(pl.LightningModule):
         x_recon, quantization_loss, commitment_loss = self(x)
         recon_loss = F.mse_loss(x_recon, x)
         loss = recon_loss + quantization_loss + self.commitment_cost * commitment_loss
-        self.log("train_loss", loss, prog_bar=True)
+        self.log("loss/recon", recon_loss, prog_bar=True)
+        self.log("loss/quantization", quantization_loss, prog_bar=True)
         return loss
 
     def validation_step(self, batch: torch.Tensor, batch_idx: int):
@@ -102,11 +103,12 @@ class VQVAE(pl.LightningModule):
         x_recon, quantization_loss, commitment_loss = self(x)
         recon_loss = F.mse_loss(x_recon, x)
         loss = recon_loss + quantization_loss + self.commitment_cost * commitment_loss
-        self.log("val_loss", loss)
+        self.log("loss/recon_val", recon_loss, prog_bar=True)
         return loss
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.lr)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+        return optimizer
 
 
 if __name__ == "__main__":

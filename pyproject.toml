@@ -29,6 +29,7 @@ optional = true
 [tool.poetry.group.interactive.dependencies]
 ipykernel = "^6.29.3"
 ipywidgets = "^8.1.2"
+tensorboard = "^2.16.2"
 
 [build-system]
 requires = ["poetry-core"]

@@ -22,7 +22,7 @@ class ConvLayer(nn.Sequential):
         padding: int = 0,
     ):
         super().__init__(
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
             nn.Conv2d(
                 in_channels,
                 out_channels,

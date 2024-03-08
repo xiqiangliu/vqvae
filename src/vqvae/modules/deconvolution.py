@@ -29,5 +29,5 @@ class DeConvLayer(nn.Sequential):
                 stride=stride,
             ),
             nn.BatchNorm2d(out_channels) if batchnorm else nn.Identity(),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
         )
