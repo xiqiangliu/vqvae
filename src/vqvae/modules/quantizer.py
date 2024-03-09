@@ -36,23 +36,23 @@ class Quantizer(nn.Module):
         """
         # Flatten the input tensor to (B*H*W, C)
         b, c, h, w = inputs.shape
-        inputs = rearrange(inputs, "b c h w -> (b h w) c")
+        inputs = rearrange(inputs, "b c h w -> (b h w) c").contiguous()
 
         # Calculate the distance between the input and the embeddings: (x - e)^2 = x^2 - 2*x*e + e^2
         distances = (
             torch.sum(inputs**2, dim=1, keepdim=True)
             - 2 * inputs @ self.embedding.weight.T
             + torch.sum(self.embedding.weight**2, dim=1)
-        )
+        ).contiguous()
 
         # Find the closest embeddings
         encoding_indices = torch.argmin(distances, dim=1).view(b, h, w)
         quantized: torch.Tensor = rearrange(
             self.embedding(encoding_indices), "b h w c -> b c h w"
-        )
+        ).contiguous()
 
         # Calculate the quantization loss and commitment loss
-        inputs = rearrange(inputs, "(b h w) c -> b c h w", b=b, h=h, w=w)
+        inputs = rearrange(inputs, "(b h w) c -> b c h w", b=b, h=h, w=w).contiguous()
         quantization_loss = torch.mean((quantized.detach() - inputs) ** 2)
         commitment_loss = torch.mean((quantized - inputs.detach()) ** 2)
 

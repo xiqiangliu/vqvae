@@ -103,7 +103,7 @@ class VQVAE(L.LightningModule):
         x_recon, quantization_loss, commitment_loss = self(x)
         recon_loss = F.mse_loss(x_recon, x)
         loss = recon_loss + quantization_loss + self.commitment_cost * commitment_loss
-        self.log("loss/recon_val", recon_loss, prog_bar=True)
+        self.log("loss/recon_val", recon_loss, prog_bar=True, sync_dist=True)
         return loss
 
     def configure_optimizers(self):
