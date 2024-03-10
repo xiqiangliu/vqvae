@@ -19,7 +19,6 @@ class ConvLayer(nn.Sequential):
         kernel_size: int,
         stride: int = 1,
         batchnorm: bool = False,
-        padding: int = 0,
     ):
         super().__init__(
             nn.ReLU(inplace=True),
@@ -28,7 +27,7 @@ class ConvLayer(nn.Sequential):
                 out_channels,
                 kernel_size=kernel_size,
                 stride=stride,
-                padding=padding,
+                padding=1,
             ),
             nn.BatchNorm2d(out_channels) if batchnorm else nn.Identity(),
         )

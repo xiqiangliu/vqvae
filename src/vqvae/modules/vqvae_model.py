@@ -83,11 +83,7 @@ class VQVAE(L.LightningModule):
         z_continous = self.encoder(x)
         z_discrete, quantization_loss, commitment_loss = self.embedding(z_continous)
         x_recon = self.decoder(z_discrete)
-        return (
-            F.interpolate(x_recon, size=orig_shape[2:]),
-            quantization_loss,
-            commitment_loss,
-        )
+        return x_recon, quantization_loss, commitment_loss
 
     def training_step(self, batch: torch.Tensor, batch_idx: int):
         x, _ = batch

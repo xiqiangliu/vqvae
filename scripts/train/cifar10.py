@@ -24,10 +24,15 @@ model = VQVAE(
 if __name__ == "__main__":
     L.seed_everything(42)
     dm = CIFAR10DataModule(batch_size=128)
+    dm.prepare_data()
     dm.setup("train")
 
     trainer = L.Trainer(
         max_steps=250_000,
-        callbacks=[EarlyStopping(monitor="loss/recon_val", patience=5)],
+        callbacks=[
+            EarlyStopping(
+                monitor="loss/recon_val", patience=20, mode="min", verbose=True
+            )
+        ],
     )
     trainer.fit(model, dm)
