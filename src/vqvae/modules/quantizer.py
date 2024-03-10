@@ -68,6 +68,7 @@ class Quantizer(nn.Module):
 
         # Update embeddings usign EMA. Using it to avoid embedding collapse.
         # Refer to the appendix of the VQ-VAE paper for more details.
+        # Use in-place operations as much as possible to avoid OOM error.
         if self.training:
             # Update the cluster size
             one_hot = (
@@ -79,19 +80,16 @@ class Quantizer(nn.Module):
             self.cluster_size.data *= self.decay
             self.cluster_size.data.add_(cluster_size, alpha=1 - self.decay)
 
-            # Update the average embedding
-            self.cluster_size.data = (
-                (self.cluster_size + self.eps)
-                / (self.cluster_size.sum() + self.num_embeddings * self.eps)
-                * self.cluster_size.sum()
-            )
-
+            # Update the average embedding.
             self.embed_avg.data *= self.decay
             self.embed_avg.add_((inputs.T @ one_hot).T, alpha=1 - self.decay)
 
             # Update the embeddings
+            _cluster_size = self.cluster_size + self.eps
+            _cluster_size *= self.cluster_size.sum()
+            _cluster_size /= self.cluster_size.sum() + self.num_embeddings * self.eps
             self.embedding.weight.data.copy_(
-                self.embed_avg / self.cluster_size.unsqueeze(1)
+                self.embed_avg / _cluster_size.unsqueeze(1)
             )
 
         # Calculate the quantization loss and commitment loss
