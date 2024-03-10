@@ -79,7 +79,6 @@ class VQVAE(L.LightningModule):
         self.commitment_cost = commitment_cost
 
     def forward(self, x: torch.Tensor):
-        orig_shape = x.shape
         z_continous = self.encoder(x)
         z_discrete, quantization_loss, commitment_loss = self.embedding(z_continous)
         x_recon = self.decoder(z_discrete)

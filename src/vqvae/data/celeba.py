@@ -1,9 +1,14 @@
 import lightning as L
 import torchvision.datasets as tv_datasets
+import torchvision.transforms as tv_transforms
 from torch.utils.data import DataLoader
 
 from vqvae import PROJECT_ROOT
-from .transforms import standard_transform as celeba_transform
+from .transforms import standard_transform
+
+celeba_transform = tv_transforms.Compose(
+    [standard_transform, tv_transforms.Resize(128)]
+)
 
 
 class CelebADataModule(L.LightningDataModule):

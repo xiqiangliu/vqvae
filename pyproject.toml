@@ -31,6 +31,12 @@ ipykernel = "^6.29.3"
 ipywidgets = "^8.1.2"
 tensorboard = "^2.16.2"
 
+[tool.poetry.group.download]
+optional = true
+
+[tool.poetry.group.download.dependencies]
+gdown = "^5.1.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
