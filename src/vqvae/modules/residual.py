@@ -55,7 +55,6 @@ class ResidualStackedLayer(nn.Sequential):
     ):
         super().__init__(
             *[ResidualLayer(in_channels, out_channels, hidden_channels)] * num_layers
-            + [nn.ReLU(inplace=True)]
         )
 
 
