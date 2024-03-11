@@ -37,13 +37,11 @@ class VQVAEEncoder(nn.Module):
             ]
         )
 
-        self.residual_layers = nn.Sequential(
-            ResidualStackedLayer(
-                in_channels=hidden_channels[-1],
-                out_channels=hidden_channels[-1],
-                hidden_channels=num_residual_channels,
-                num_layers=num_residual_layers,
-            )
+        self.residual_layers = ResidualStackedLayer(
+            in_channels=hidden_channels[-1],
+            out_channels=hidden_channels[-1],
+            hidden_channels=num_residual_channels,
+            num_layers=num_residual_layers,
         )
 
     def forward(self, x: torch.Tensor):

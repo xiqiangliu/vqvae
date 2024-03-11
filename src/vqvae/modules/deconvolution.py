@@ -20,7 +20,10 @@ class DeConvLayer(nn.Sequential):
         kernel_size: int,
         stride: int = 1,
         batchnorm: bool = False,
+        activation: str = "relu",
     ):
+        if activation not in {"relu", "tanh"}:
+            raise ValueError(f"Activation {activation} not supported for DeConvLayer.")
         super().__init__(
             nn.ConvTranspose2d(
                 in_channels,
@@ -30,5 +33,5 @@ class DeConvLayer(nn.Sequential):
                 padding=1,
             ),
             nn.BatchNorm2d(out_channels) if batchnorm else nn.Identity(),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=True) if activation == "relu" else nn.Tanh(),
         )

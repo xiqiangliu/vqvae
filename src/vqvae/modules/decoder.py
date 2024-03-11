@@ -32,18 +32,29 @@ class VQVAEDecoder(nn.Module):
                     batchnorm=batchnorm[i]
                     if isinstance(batchnorm, Sequence)
                     else batchnorm,
+                    activation="relu",
                 )
-                for i in range(len(hidden_channels) - 1, -1, -1)
+                for i in range(len(hidden_channels) - 1, 0, -1)
+            ]
+            + [
+                DeConvLayer(
+                    in_channels=hidden_channels[0],
+                    out_channels=out_channels,
+                    kernel_size=kernel_sizes[0],
+                    stride=strides[0] if strides else 1,
+                    batchnorm=batchnorm[0]
+                    if isinstance(batchnorm, Sequence)
+                    else batchnorm,
+                    activation="tanh",  # Use tanh activation for the last layer so output will be in [-1,1]
+                )
             ]
         )
 
-        self.residual_layers = nn.Sequential(
-            ResidualStackedLayer(
-                in_channels=hidden_channels[-1],
-                out_channels=hidden_channels[-1],
-                hidden_channels=num_residual_channels,
-                num_layers=num_residual_layers,
-            )
+        self.residual_layers = ResidualStackedLayer(
+            in_channels=hidden_channels[-1],
+            out_channels=hidden_channels[-1],
+            hidden_channels=num_residual_channels,
+            num_layers=num_residual_layers,
         )
 
     def forward(self, x: torch.Tensor):
