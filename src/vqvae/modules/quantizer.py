@@ -70,27 +70,30 @@ class Quantizer(nn.Module):
         # Refer to the appendix of the VQ-VAE paper for more details.
         # Use in-place operations as much as possible to avoid OOM error.
         if self.training:
-            # Update the cluster size
-            one_hot = (
-                F.one_hot(encoding_indices, self.num_embeddings)
-                .type(inputs.dtype)
-                .view(-1, self.num_embeddings)
-            )
-            cluster_size = one_hot.sum(dim=0)
-            self.cluster_size.data *= self.decay
-            self.cluster_size.data.add_(cluster_size, alpha=1 - self.decay)
+            with torch.no_grad():
+                # Update the cluster size
+                one_hot = (
+                    F.one_hot(encoding_indices, self.num_embeddings)
+                    .type(inputs.dtype)
+                    .view(-1, self.num_embeddings)
+                )
+                cluster_size = one_hot.sum(dim=0)
+                self.cluster_size.data *= self.decay
+                self.cluster_size.data.add_(cluster_size, alpha=1 - self.decay)
 
-            # Update the average embedding.
-            self.embed_avg.data *= self.decay
-            self.embed_avg.add_((inputs.T @ one_hot).T, alpha=1 - self.decay)
+                # Update the average embedding.
+                self.embed_avg.data *= self.decay
+                self.embed_avg.add_((inputs.T @ one_hot).T, alpha=1 - self.decay)
 
-            # Update the embeddings
-            _cluster_size = self.cluster_size + self.eps
-            _cluster_size *= self.cluster_size.sum()
-            _cluster_size /= self.cluster_size.sum() + self.num_embeddings * self.eps
-            self.embedding.weight.data.copy_(
-                self.embed_avg / _cluster_size.unsqueeze(1)
-            )
+                # Update the embeddings
+                _cluster_size = self.cluster_size + self.eps
+                _cluster_size *= self.cluster_size.sum()
+                _cluster_size /= (
+                    self.cluster_size.sum() + self.num_embeddings * self.eps
+                )
+                self.embedding.weight.data.copy_(
+                    self.embed_avg / _cluster_size[:, None]
+                )
 
         # Calculate the quantization loss and commitment loss
         inputs = rearrange(inputs, "(b h w) c -> b c h w", b=b, h=h, w=w).contiguous()
