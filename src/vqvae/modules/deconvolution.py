@@ -22,7 +22,7 @@ class DeConvLayer(nn.Sequential):
         batchnorm: bool = False,
         activation: str = "relu",
     ):
-        if activation not in {"relu", "tanh"}:
+        if activation not in {"relu", "sigmoid"}:
             raise ValueError(f"Activation {activation} not supported for DeConvLayer.")
         super().__init__(
             nn.ConvTranspose2d(
