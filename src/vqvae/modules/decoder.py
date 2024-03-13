@@ -45,7 +45,7 @@ class VQVAEDecoder(nn.Module):
                     batchnorm=batchnorm[0]
                     if isinstance(batchnorm, Sequence)
                     else batchnorm,
-                    activation="tanh",  # Use tanh activation for the last layer so output will be in [-1,1]
+                    activation="sigmoid",  # Use tanh activation for the last layer so output will be in [0, 1]
                 )
             ]
         )

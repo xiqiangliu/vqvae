@@ -33,5 +33,5 @@ class DeConvLayer(nn.Sequential):
                 padding=1,
             ),
             nn.BatchNorm2d(out_channels) if batchnorm else nn.Identity(),
-            nn.ReLU(inplace=True) if activation == "relu" else nn.Tanh(),
+            nn.ReLU(inplace=True) if activation == "relu" else nn.Sigmoid(),
         )
