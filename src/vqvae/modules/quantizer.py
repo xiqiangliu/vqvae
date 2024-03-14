@@ -21,6 +21,7 @@ class Quantizer(nn.Module):
         embedding_dim: int,
         decay: float = 0.99,
         eps: float = 1e-5,
+        ema: bool = True,
     ):
         super().__init__()
 
@@ -33,10 +34,12 @@ class Quantizer(nn.Module):
         )
 
         # EMA Parameters
-        self.decay = decay
-        self.eps = eps
-        self.register_buffer("cluster_size", torch.zeros(self.num_embeddings))
-        self.register_buffer("embed_avg", self.embedding.weight.data.clone())
+        self.ema = ema
+        if self.ema:
+            self.decay = decay
+            self.eps = eps
+            self.register_buffer("cluster_size", torch.zeros(self.num_embeddings))
+            self.register_buffer("embed_avg", self.embedding.weight.data.clone())
 
     def forward(self, inputs: torch.Tensor):
         """Forward pass of the quantizer.
@@ -69,7 +72,7 @@ class Quantizer(nn.Module):
         # Update embeddings usign EMA. Using it to avoid embedding collapse.
         # Refer to the appendix of the VQ-VAE paper for more details.
         # Use in-place operations as much as possible to avoid OOM error.
-        if self.training:
+        if self.training and self.ema:
             with torch.no_grad():
                 # Update the cluster size
                 one_hot = (

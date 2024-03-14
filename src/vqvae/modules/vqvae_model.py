@@ -22,6 +22,7 @@ class VQVAE(L.LightningModule):
         kernel_sizes: Sequence[int] | int,
         strides: Sequence[int] | int | None = None,
         batchnorm: bool = False,
+        quantizer_ema: bool = True,
         learning_rate: float = 1e-3,
     ):
         super().__init__()
@@ -37,6 +38,7 @@ class VQVAE(L.LightningModule):
                 "kernel_sizes": kernel_sizes,
                 "strides": strides,
                 "batchnorm": batchnorm,
+                "quantizer_ema" : quantizer_ema,
                 "learning_rate": learning_rate,
             }
         )
@@ -73,7 +75,7 @@ class VQVAE(L.LightningModule):
             strides=strides,
         )
 
-        self.embedding = Quantizer(num_embeddings, embedding_dim)
+        self.embedding = Quantizer(num_embeddings, embedding_dim, ema=quantizer_ema)
 
         self.lr = learning_rate
         self.commitment_cost = commitment_cost
