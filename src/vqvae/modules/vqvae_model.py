@@ -38,7 +38,7 @@ class VQVAE(L.LightningModule):
                 "kernel_sizes": kernel_sizes,
                 "strides": strides,
                 "batchnorm": batchnorm,
-                "quantizer_ema" : quantizer_ema,
+                "quantizer_ema": quantizer_ema,
                 "learning_rate": learning_rate,
             }
         )
@@ -101,6 +101,20 @@ class VQVAE(L.LightningModule):
         recon_loss = F.mse_loss(x_recon, x)
         loss = recon_loss + quantization_loss + self.commitment_cost * commitment_loss
         self.log("loss/recon_val", recon_loss, prog_bar=True, sync_dist=True)
+        self.log(
+            "loss/quantization_val", quantization_loss, prog_bar=True, sync_dist=True
+        )
+        return loss
+
+    def test_step(self, batch: torch.Tensor, batch_idx: int):
+        x, _ = batch
+        x_recon, quantization_loss, commitment_loss = self(x)
+        recon_loss = F.mse_loss(x_recon, x)
+        loss = recon_loss + quantization_loss + self.commitment_cost * commitment_loss
+        self.log("loss/recon_test", recon_loss, prog_bar=True, sync_dist=True)
+        self.log(
+            "loss/quantization_test", quantization_loss, prog_bar=True, sync_dist=True
+        )
         return loss
 
     def configure_optimizers(self):

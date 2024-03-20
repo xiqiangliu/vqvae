@@ -32,7 +32,7 @@ class CelebADataModule(L.LightningDataModule):
                     download=False,
                 )
             case "validation":
-                self.train_dataset = tv_datasets.CelebA(
+                self.val_dataset = tv_datasets.CelebA(
                     root=str(PROJECT_ROOT / "datasets"),
                     split="valid",
                     target_type="attr",
@@ -44,7 +44,7 @@ class CelebADataModule(L.LightningDataModule):
                     root=str(PROJECT_ROOT / "datasets"),
                     split="test",
                     target_type="attr",
-                    transform=standard_transform,
+                    transform=celeba_transform,
                     download=False,
                 )
 
@@ -59,7 +59,7 @@ class CelebADataModule(L.LightningDataModule):
 
     def val_dataloader(self):
         return DataLoader(
-            self.train_dataset,
+            self.val_dataset,
             batch_size=self.val_batch_size,
             shuffle=False,
             num_workers=mp.cpu_count(),
