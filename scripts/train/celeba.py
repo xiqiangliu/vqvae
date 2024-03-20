@@ -27,6 +27,7 @@ if __name__ == "__main__":
     dm.prepare_data()
     dm.setup("train")
     dm.setup("validation")
+    dm.setup("test")
 
     trainer = L.Trainer(
         max_steps=250_000,
@@ -38,3 +39,5 @@ if __name__ == "__main__":
         default_root_dir="logs/celeba/",
     )
     trainer.fit(model, dm)
+    trainer.validate(model, dm)
+    trainer.test(model, dm)

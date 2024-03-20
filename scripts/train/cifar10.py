@@ -23,9 +23,10 @@ model = VQVAE(
 
 if __name__ == "__main__":
     L.seed_everything(42)
-    dm = CIFAR10DataModule(batch_size=128)
+    dm = CIFAR10DataModule(train_batch_size=128)
     dm.prepare_data()
     dm.setup("train")
+    dm.setup("validation")
 
     trainer = L.Trainer(
         max_steps=250_000,
@@ -36,3 +37,4 @@ if __name__ == "__main__":
         ],
     )
     trainer.fit(model, dm)
+    trainer.validate(model, dm)
