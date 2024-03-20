@@ -23,9 +23,10 @@ model = VQVAE(
 
 if __name__ == "__main__":
     L.seed_everything(42)
-    dm = CelebADataModule(batch_size=32)
+    dm = CelebADataModule(train_batch_size=128)
     dm.prepare_data()
     dm.setup("train")
+    dm.setup("validation")
 
     trainer = L.Trainer(
         max_steps=250_000,
@@ -34,7 +35,6 @@ if __name__ == "__main__":
                 monitor="loss/recon_val", patience=20, mode="min", verbose=True
             )
         ],
-        accumulate_grad_batches=4,
         default_root_dir="logs/celeba/",
     )
     trainer.fit(model, dm)
