@@ -32,7 +32,7 @@ if __name__ == "__main__":
         max_steps=250_000,
         callbacks=[
             EarlyStopping(
-                monitor="loss/recon_val", patience=20, mode="min", verbose=True
+                monitor="loss/recon_val", patience=10, mode="min", verbose=True
             )
         ],
     )

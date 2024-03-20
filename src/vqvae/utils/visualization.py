@@ -7,10 +7,9 @@ from torchvision.utils import make_grid
 plt.rcParams["savefig.bbox"] = "tight"
 
 
-def show(imgs: torch.Tensor):
-    gridded = make_grid(imgs)
+def show(imgs: torch.Tensor, *args, **kwargs):
+    gridded = make_grid(imgs, *args, **kwargs)
     _show(gridded)
-    return gridded
 
 
 def _show(imgs):
