@@ -15,7 +15,7 @@ def show(imgs: torch.Tensor, *args, **kwargs):
 def _show(imgs):
     if not isinstance(imgs, list):
         imgs = [imgs]
-    fig, axs = plt.subplots(ncols=len(imgs), squeeze=False)
+    fig, axs = plt.subplots(ncols=len(imgs), squeeze=False, figsize=(30, 30))
     for i, img in enumerate(imgs):
         img = img.detach()
         img = F.to_pil_image(img)
