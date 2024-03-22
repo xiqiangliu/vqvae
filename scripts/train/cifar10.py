@@ -1,11 +1,8 @@
-import logging
-
 import lightning as L
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
+from vqvae import PROJECT_ROOT
 from vqvae.data.cifar10 import CIFAR10DataModule
 from vqvae.modules.vqvae_model import VQVAE
-
-logger = logging.getLogger("vqvae.train")
 
 model = VQVAE(
     in_channels=3,
@@ -35,6 +32,7 @@ if __name__ == "__main__":
                 monitor="loss/recon_val", patience=10, mode="min", verbose=True
             )
         ],
+        default_root_dir=PROJECT_ROOT / "logs/cifar10/",
     )
     trainer.fit(model, dm)
     trainer.validate(model, dm)
